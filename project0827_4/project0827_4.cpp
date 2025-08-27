@@ -41,6 +41,49 @@ public:
         return -1;
     }
 
+    //지급
+    bool givePotion(const string& potionName)
+    {
+        for (auto& r : recipes)
+        {
+            if (r.potionName == potionName)
+            {
+                if (r.stock > 0)
+                {
+                    r.stock--;
+                    return true;
+                }
+                else
+                {
+                    cout << "물약을 소지하고 있지 않습니다." << endl;
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    //반환
+    bool returnPotion(const string& potionName)
+    {
+        for (auto& r : recipes)
+        {
+            if (r.potionName == potionName)
+            {
+                if (r.stock < 3)
+                {
+                    r.stock++;
+                    return true;
+                }
+                else
+                {
+                    cout << "물약의 재고는 3개가 최대입니다." << endl;
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
   
     // 모든 레시피 출력 메서드
     void displayAllRecipes() const 
