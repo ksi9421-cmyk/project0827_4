@@ -58,6 +58,38 @@ public:
         }
         cout << "---------------------------\n";
     }
+
+    // 이름으로 검색
+    PotionRecipe* searchRecipeByName(const string& name)
+    {
+        for (size_t i = 0; i < recipes.size(); ++i)
+        {
+            if (recipes[i].potionName == name)
+            {
+                return &recipes[i];
+            }
+        }
+        return nullptr;
+    }
+
+    // 재료 포함 검색
+    vector<PotionRecipe*> searchRecipesByIngredient(const string& ingredient)
+    {
+        vector<PotionRecipe*> result;
+        for (size_t i = 0; i < recipes.size(); ++i) 
+        {
+            for (const auto& ing : recipes[i].ingredients) 
+            {
+                if (ing.find(ingredient) != string::npos)
+                {
+                    result.push_back(&recipes[i]);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+        
 };
 
 int main() 
@@ -66,10 +98,12 @@ int main()
 
     while (true) 
     {
-        cout << "⚗️ 연금술 공방 관리 시스템" << endl;
+        cout << "연금술 공방 관리 시스템" << endl;
         cout << "1. 레시피 추가" << endl;
         cout << "2. 모든 레시피 출력" << endl;
-        cout << "3. 종료" << endl;
+        cout << "3. 이름 검색" << endl;
+        cout << "4. 재료 검색" << endl;
+        cout << "5. 종료" << endl;
         cout << "선택: ";
 
         int choice;
@@ -83,7 +117,7 @@ int main()
             continue;
         }
 
-        if (choice == 1) 
+        if (choice == 1)
         {
             string name;
             cout << "물약 이름: ";
@@ -95,13 +129,13 @@ int main()
             string ingredient;
             cout << "필요한 재료들을 입력하세요. (입력 완료 시 '끝' 입력)" << endl;
 
-            while (true) 
+            while (true)
             {
                 cout << "재료 입력: ";
                 getline(cin, ingredient);
 
                 // 사용자가 '끝'을 입력하면 재료 입력 종료
-                if (ingredient == "끝") 
+                if (ingredient == "끝")
                 {
                     break;
                 }
@@ -109,24 +143,74 @@ int main()
             }
 
             // 입력받은 재료가 하나 이상 있을 때만 레시피 추가
-            if (!ingredients_input.empty()) {
+            if (!ingredients_input.empty())
+            {
                 myWorkshop.addRecipe(name, ingredients_input);
             }
-            else {
+            else
+            {
                 cout << ">> 재료가 입력되지 않아 레시피 추가를 취소합니다." << endl;
             }
 
         }
-        else if (choice == 2) {
+        else if (choice == 2)
+        {
             myWorkshop.displayAllRecipes();
 
         }
-        else if (choice == 3) {
+        else if (choice == 3)
+        {
+            string searchName;
+            cin.ignore(10000, '\n');
+            cout << "검색할 물약 이름: ";
+            getline(cin, searchName);
+
+            PotionRecipe* recipe = myWorkshop.searchRecipeByName(searchName);
+            if (recipe)
+            {
+                cout << "찾은 레시피: " << recipe->potionName << "\n재료: ";
+                for (auto& ing : recipe->ingredients)
+                    cout << ing << " ";
+                cout << endl;
+            }
+            else
+            {
+                cout << "해당 이름의 레시피가 없습니다.\n";
+            }
+        }
+        else if (choice == 4)
+        {
+            string searchIngredient;
+            cin.ignore(10000, '\n');
+            cout << "검색할 재료: ";
+            getline(cin, searchIngredient);
+
+            auto recipes = myWorkshop.searchRecipesByIngredient(searchIngredient);
+            if (recipes.empty())
+            {
+                cout << "해당 재료가 포함된 레시피가 없습니다.\n";
+            }
+            else
+            {
+                cout << "검색 결과:\n";
+                for (auto r : recipes)
+                {
+                    cout << "- " << r->potionName << " (";
+                    for (auto& ing : r->ingredients)
+                        cout << ing << " ";
+                    cout << ")\n";
+                }
+            }
+        }
+
+        else if (choice == 5) 
+        {
             cout << "공방 문을 닫습니다..." << endl;
             break;
 
         }
-        else {
+        else 
+        {
             cout << "잘못된 선택입니다. 다시 시도하세요." << endl;
         }
     }
