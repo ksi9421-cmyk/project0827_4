@@ -8,11 +8,11 @@ class PotionRecipe {
 public:
     string potionName;
     vector<string> ingredients; // 단일 재료에서 재료 '목록'으로 변경
+    int stock;
 
     // 생성자: 재료 목록을 받아 초기화하도록 수정
     PotionRecipe(const string& name, const vector<string>& ingredients)
-        : potionName(name), ingredients(ingredients) {
-    }
+        : potionName(name), ingredients(ingredients), stock(3) {}
 };
 
 // AlchemyWorkshop 클래스: 레시피 목록을 관리
@@ -26,9 +26,22 @@ public:
     void addRecipe(const string& name, const vector<string>& ingredients) 
     {
         recipes.push_back(PotionRecipe(name, ingredients));
-        cout << ">> 새로운 레시피 '" << name << "'이(가) 추가되었습니다." << endl;
+        cout << ">> 새로운 레시피 '" << name << "'이(가) 추가되었습니다. (재고 3개)" << endl;
     }
 
+    int getStock(const string& potionName)
+    {
+        for (auto& r : recipes)
+        {
+            if (r.potionName == potionName)
+            {
+                return r.stock;
+            }
+        }
+        return -1;
+    }
+
+  
     // 모든 레시피 출력 메서드
     void displayAllRecipes() const 
     {
@@ -41,8 +54,8 @@ public:
         cout << "\n--- [ 전체 레시피 목록 ] ---" << endl;
         for (size_t i = 0; i < recipes.size(); ++i) 
         {
-           cout << "- 물약 이름: " << recipes[i].potionName << endl;
-           cout << "  > 필요 재료: ";
+            cout << "- 물약 이름: " << recipes[i].potionName << " (재고: " << recipes[i].stock << ")" << endl;           
+            cout << "  > 필요 재료: ";
 
             // 재료 목록을 순회하며 출력
             for (size_t j = 0; j < recipes[i].ingredients.size(); ++j) 
